@@ -394,9 +394,9 @@ int generate_floor(int arr[], int room_num)
             built = false;
             rooms_built++;
 
-            print_floor(arr);
-            printf("BUILT: %i\n", rooms_built);
-            printf("QUEUE: %i\n", room_queue);
+            //print_floor(arr);
+            //printf("BUILT: %i\n", rooms_built);
+            //printf("QUEUE: %i\n", room_queue);
         }
 
     }
@@ -430,11 +430,9 @@ int main(void)
     //unsigned int bina = 0b0001;
     //printf("%u\n", bina + 0b1110);
 
-    //SetRandomSeed(16);
+    SetRandomSeed(16);
 
     generate_floor(floor_map, 8);
-    print_floor(floor_map);
-
     generate_map(mapHeight, mapWidth);
 
     int scale_a = 4;
@@ -501,8 +499,8 @@ int main(void)
                 floor_map[i] = 0;
             }
             empty_map();
-            print_floor(floor_map);
             generate_floor(floor_map, 8);
+            print_floor(floor_map);
             generate_map(mapHeight, mapWidth);
 
             px = (starting_room_element % 10) * 18 + 9;
@@ -660,7 +658,7 @@ int main(void)
                 {
                     if (i == 0) { first_ray[0] = x; first_ray[1] = y; }
                     // Correct fish-eye effect
-                    d *= cost(a);
+                    //d *= cost(a);
 
                     Color color = { 0, 160 - d * 5, 0, 255 };
                     //Color color = { 0, 150, 0, 255 };
@@ -670,17 +668,31 @@ int main(void)
                         color = (Color){ 0, 0, 0, 255 };
                     }
 
-                    if (!hitIsHorizontal)
+                    if (!hitIsHorizontal)   
                     {
                         color = (Color){ color.r / 2, color.g / 2, color.b / 2, 255 };
 
                     }
 
-                    int lineHeight = (int)(h / d);
-                    int drawStart = halfScreenHeight - lineHeight;
-                    int drawEnd = halfScreenHeight + lineHeight;
+                    int lineHeight = h / d / cost(a);
+                    int drawStart = floor(halfScreenHeight - lineHeight);
+                    int drawEnd = floor(halfScreenHeight + lineHeight);
+                    int offset = 0;
 
-                    DrawLine(i, drawStart, i, drawEnd, color);
+                    //DrawLine(i, drawStart, i, drawEnd, color);
+                    if (hitIsHorizontal)
+                    {
+                        offset = fmod((px + vx * d), 1) * 64;
+                    }
+                    else
+                    {
+                        offset = fmod((py + vy * d), 1) * 64;
+                    }
+
+                    Vector2 fff = { 0.0f, 0.0f };
+                    Rectangle vvv = { offset, 0, 1, (float)wall_texture.height};
+                    Rectangle www = { i, drawStart, 1, 2 * lineHeight};
+                    DrawTexturePro(wall_texture, vvv, www, fff, 0.0f, WHITE);
 
                     collFound = true;
                     break;
@@ -717,9 +729,14 @@ int main(void)
             }
 
 
-            DrawText(TextFormat("%f", floor(px)), 0, screenHeight - 40, 20, BLACK);
-            DrawText(TextFormat("%f", floor(py)), 0, screenHeight - 20, 20, BLACK);
-            DrawText(TextFormat("%f", pa), 0, screenHeight - 60, 20, BLACK);
+            DrawText(TextFormat("%f", px), 0, screenHeight - 40, 20, BLACK);
+            DrawText(TextFormat("%f", py), 0, screenHeight - 20, 20, BLACK);
+            DrawText(TextFormat("ANG: %f", pa), 0, screenHeight - 60, 20, BLACK);
+            
+            DrawText(TextFormat("X: %f", x), halfScreenWidth, screenHeight - 60, 20, BLACK);
+            DrawText(TextFormat("D: %f", d), halfScreenWidth + 200, screenHeight - 60, 20, BLACK);
+            DrawText(TextFormat("VX: %f", vx), halfScreenWidth + 200, screenHeight - 40, 20, BLACK);
+            DrawText(TextFormat("Y: %f", y), halfScreenWidth, screenHeight - 40, 20, BLACK);
 
             DrawRectangle(ex * scale_a, ey * scale_a, 16 * scale_a, 12 * scale_a, RED);
             DrawRectangle(floor(px) * scale_a, floor(py) * scale_a, scale_a, scale_a, BLACK);
@@ -731,11 +748,6 @@ int main(void)
             DrawLine(px * scale_a, py * scale_a, x * scale_a, y * scale_a, WHITE);
 
             DrawFPS(0, GetScreenHeight() - 80);
-
-            //Vector2 fff = { 350.0f, 280.0f };
-            //Rectangle vvv = { 0.0f, 0.0f, (float)wall_texture.width/6, (float)wall_texture.height };
-            //DrawTexture(wall_texture, 0, 0, WHITE);
-            //DrawTextureRec(wall_texture, vvv, fff, WHITE);
         }
 
         EndDrawing();
