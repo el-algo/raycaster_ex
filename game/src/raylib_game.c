@@ -660,10 +660,10 @@ int main(void)
                     // Correct fish-eye effect
                     //d *= cost(a);
 
-                    Color color = { 0, 160 - d * 5, 0, 255 };
+                    Color color = { 255 - d * 4, 255 - d * 4, 255 - d * 4, 255 };
                     //Color color = { 0, 150, 0, 255 };
 
-                    if (d >= 32.0)
+                    if (d >= 64.0)
                     {
                         color = (Color){ 0, 0, 0, 255 };
                     }
@@ -692,7 +692,7 @@ int main(void)
                     Vector2 fff = { 0.0f, 0.0f };
                     Rectangle vvv = { offset, 0, 1, (float)wall_texture.height};
                     Rectangle www = { i, drawStart, 1, 2 * lineHeight};
-                    DrawTexturePro(wall_texture, vvv, www, fff, 0.0f, WHITE);
+                    DrawTexturePro(wall_texture, vvv, www, fff, 0.0f, color);
 
                     collFound = true;
                     break;
